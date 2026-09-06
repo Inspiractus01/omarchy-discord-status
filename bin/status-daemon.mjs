@@ -268,12 +268,19 @@ async function handleCommand(cmd) {
         // click does that), but it correctly lands the channel list, and the
         // subsequent channel click below does the actual joining.
         await evaluate(target.webSocketDebuggerUrl, navigateToGuildExpr(guildId));
-        // Give the fresh page a moment to boot before polling for the channel.
-        // Confirmed live: 2.5s was too eager and Discord's own client briefly
-        // shows a different (seemingly arbitrary default) guild while it's
-        // still hydrating right after a cold navigation; 5s consistently
-        // lands on the right one.
-        await sleep(5000);
+        // Poll rather than a blind fixed wait: right after a cold navigation
+        // Discord's client briefly shows a different (seemingly arbitrary
+        // default) guild while it's still hydrating, and a fixed 2.5s sleep
+        // wasn't always enough for it to settle on the right one (confirmed
+        // live) -- but it's often much faster than that, so waiting a fixed
+        // 5s every time makes the common case needlessly slow. Check back
+        // every 300ms and move on the moment it's actually ready.
+        for (let i = 0; i < 20; i++) {
+          await sleep(300);
+          const nowGuild = await evaluate(target.webSocketDebuggerUrl,
+            `(location.href.match(/\\/channels\\/(\\d+)/) || [])[1] || null`);
+          if (nowGuild === guildId) break;
+        }
       }
       let clicked = false;
       for (let attempt = 0; attempt < 6 && !clicked; attempt++) {

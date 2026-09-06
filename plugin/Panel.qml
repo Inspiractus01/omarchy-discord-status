@@ -246,7 +246,7 @@ Panel {
 
           width: Style.space(32)
           height: Style.space(32)
-          radius: Style.space(6)
+          radius: 0
           color: "transparent"
           border.width: 1
           border.color: Qt.darker(root.bar.foreground, 1.3)
@@ -255,15 +255,9 @@ Panel {
             id: glyphText
             anchors.centerIn: parent
             text: toggle.glyph
+            color: root.bar.foreground
+            font.family: root.bar.fontFamily
             font.pixelSize: Style.font.icon
-            visible: false
-            layer.enabled: true
-          }
-          MultiEffect {
-            anchors.fill: glyphText
-            source: glyphText
-            colorization: 1.0
-            colorizationColor: root.bar.foreground
           }
           Rectangle {
             visible: toggle.active
@@ -283,24 +277,41 @@ Panel {
         }
 
         IconToggle {
-          glyph: "🎤"
+          glyph: ""
           active: !!root.status.muted
           tip: root.status.muted ? "Unmute" : "Mute"
           onActivated: root.sendCommand("mute")
         }
 
         IconToggle {
-          glyph: "🎧"
+          glyph: ""
           active: !!root.status.deafened
           tip: root.status.deafened ? "Undeafen" : "Deafen"
           onActivated: root.sendCommand("deafen")
         }
 
-        Button {
-          text: "Disconnect"
-          bordered: true
-          foreground: "red"
-          onClicked: root.sendCommand("disconnect")
+        Rectangle {
+          height: Style.space(32)
+          width: disconnectText.implicitWidth + Style.space(16)
+          radius: 0
+          color: "transparent"
+          border.width: 1
+          border.color: "red"
+
+          Text {
+            id: disconnectText
+            anchors.centerIn: parent
+            text: "Disconnect"
+            color: "red"
+            font.family: root.bar.fontFamily
+            font.pixelSize: Style.font.body
+          }
+          MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: root.sendCommand("disconnect")
+          }
         }
       }
 
