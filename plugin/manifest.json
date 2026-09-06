@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "michal.discord-status",
+  "name": "Discord Status",
+  "version": "1.0.0",
+  "author": "michal",
+  "license": "MIT",
+  "description": "Shows Discord voice-connection status, with mute/disconnect and jump-to-window.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Panel.qml"
+  },
+  "barWidget": {
+    "displayName": "Discord Status",
+    "description": "Voice channel status, mute/disconnect, jump to Discord",
+    "category": "System",
+    "allowMultiple": false,
+    "defaultSection": "right"
+  }
+}
